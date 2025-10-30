@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bookstore-grpc
+  labels:
+    app: bookstore-grpc
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bookstore-grpc
+  template:
+    metadata:
+      labels:
+        app: bookstore-grpc
+    spec:
+      containers:
+        - name: bookstore-grpc
+          image: ghcr.io/shiponcs/bookstore-grpc:1.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 50051
+              name: grpc
+          livenessProbe:
+            tcpSocket:
+              port: 50051
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          readinessProbe:
+            tcpSocket:
+              port: 50051
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "256Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bookstore-grpc
+spec:
+  selector:
+    app: bookstore-grpc
+  ports:
+    - name: grpc
+      protocol: TCP
+      port: 50051
+      targetPort: 50051

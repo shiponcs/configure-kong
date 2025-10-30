@@ -1,0 +1,42 @@
+ingressController:
+  enabled: false
+
+image:
+  repository: kong/kong
+  tag: "3.9.1-ubuntu"
+
+secretVolumes:
+  - kong-cluster-cert
+
+env:
+  role: data_plane
+  database: "off"
+  cluster_control_plane: kong-cp-kong-cluster.kong.svc.cluster.local:8005
+  # If you have a telemetry service on port 8006, set it here. Otherwise, you can omit or add it later.
+  # cluster_telemetry_endpoint: kong-cp-kong-cluster.kong.svc.cluster.local:8006
+  lua_ssl_trusted_certificate: /etc/secrets/kong-cluster-cert/tls.crt
+  cluster_cert: /etc/secrets/kong-cluster-cert/tls.crt
+  cluster_cert_key: /etc/secrets/kong-cluster-cert/tls.key
+  proxy_listen: "0.0.0.0:8000 http2, [::]:8000 http2, 0.0.0.0:8443 http2 ssl, [::]:8443 http2 ssl"
+
+
+proxy:
+  enabled: true
+
+admin:
+  enabled: false
+
+manager:
+  enabled: false
+
+proxy:
+  enabled: true
+
+admin:
+  enabled: false
+
+manager:
+  enabled: false
+
+serviceMonitor:
+  enabled: true

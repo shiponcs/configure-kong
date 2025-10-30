@@ -1,0 +1,29 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    app.kubernetes.io/instance: kong
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: kong
+    app.kubernetes.io/version: "3.6"
+    helm.sh/chart: kong-2.41.0
+  name: kong-kong
+  namespace: kong
+spec:
+  endpoints:
+  - scheme: http
+    targetPort: status
+  - scheme: http
+    targetPort: cmetrics
+  jobLabel: kong
+  namespaceSelector:
+    matchNames:
+    - kong
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: kong
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: kong
+      app.kubernetes.io/version: "3.6"
+      enable-metrics: "true"
+      helm.sh/chart: kong-2.41.0
